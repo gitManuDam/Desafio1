@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.desafio_app"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.desafio_app"
@@ -33,6 +33,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -45,4 +48,26 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+
+    implementation(libs.retrofit)
+
+    implementation(libs.converter.gson)
+
+    // Coroutines
+
+    implementation(libs.kotlinx.coroutines.core)
+
+    implementation(libs.kotlinx.coroutines.android)
+
+    // Lifecycle
+
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+
+    implementation(libs.material)
+
+
+
 }

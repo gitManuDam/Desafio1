@@ -75,7 +75,7 @@ class UsuarioDAOImpl:UsuarioDAO {
 
     override fun obtenerTodos(): List<Usuario> {
         val usuarios = mutableListOf<Usuario>()
-        val sql = "SELECT * FROM usuarios"
+        val sql = "SELECT * FROM usuario"
         val connection = Database.getConnection()
         connection?.use {
             val statement = it.prepareStatement(sql)
