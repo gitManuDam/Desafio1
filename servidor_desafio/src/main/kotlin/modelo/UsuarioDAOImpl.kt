@@ -22,7 +22,7 @@ class UsuarioDAOImpl:UsuarioDAO {
         return false
     }
 
-    override fun obtener(id: Int): Usuario? {
+    override fun obtenerUsuarioPorId(id: Int): Usuario? {
         val sql = "SELECT * FROM usuario WHERE id = ?"
         val connection = Database.getConnection()
         connection?.use{
@@ -96,6 +96,30 @@ class UsuarioDAOImpl:UsuarioDAO {
             }
         }
         return usuarios
+    }
+
+    override fun obtenerUsuarioPorNombre(nombre: String): Usuario? {
+        val sql = "SELECT * FROM usuario WHERE nombre = ?"
+        val connection = Database.getConnection()
+        connection?.use{
+            val statement = it.prepareStatement(sql)
+            statement.setString(1, nombre)
+            val resultSet = statement.executeQuery()
+
+            if (resultSet.next()) {
+                return Usuario(
+                    id = resultSet.getInt("id"),
+                    nombre = resultSet.getString("nombre"),
+                    edad = resultSet.getInt("edad"),
+                    experiencia= resultSet.getInt("experiencia") ,
+                    rol_id=  resultSet.getInt("rol_id"),
+                    clave=  resultSet.getString("clave"),
+                    activo= resultSet.getInt("activo") ,
+                    foto = resultSet.getString("foto")
+                )
+            }
+        }
+        return null
     }
 
 }

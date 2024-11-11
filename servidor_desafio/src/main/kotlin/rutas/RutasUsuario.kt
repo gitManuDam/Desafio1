@@ -9,12 +9,13 @@ import io.ktor.server.routing.*
 import modelo.Usuario
 import modelo.UsuarioDAO
 import modelo.UsuarioDAOImpl
+import modelo.UsuarioLogIn
 
 
 val usuarioDAO: UsuarioDAO = UsuarioDAOImpl()
 
 fun Route.rutasUsuario() {
-    route("/listado"){
+    route("/listarUsuario"){
         get{
             if (usuarioDAO.obtenerTodos().isNotEmpty()) {
                 return@get call.respond(HttpStatusCode.OK, usuarioDAO.obtenerTodos())
@@ -26,25 +27,25 @@ fun Route.rutasUsuario() {
         get{
             val id = call.parameters["id"] ?: return@get call.respond(HttpStatusCode.BadRequest, null)
 
-            val usuario = usuarioDAO.obtener(id.toInt()) ?: return@get call.respond(HttpStatusCode.NotFound, null)
+            val usuario = usuarioDAO.obtenerUsuarioPorId(id.toInt()) ?: return@get call.respond(HttpStatusCode.NotFound, null)
 
             call.respond(HttpStatusCode.OK, usuario)
         }
-        route("/login") {
+        route("/loginUsuario") {
             post{
-                val user = call.receive<Usuario>()
-                val usuario = usuarioDAO.obtener(user.id) ?: return@post call.respond(HttpStatusCode.NotFound, null)
+                val user = call.receive<UsuarioLogIn>()
+                val usuario = usuarioDAO.obtenerUsuarioPorNombre(user.nombre) ?: return@post call.respond(HttpStatusCode.NotFound, null)
                 if (usuario.clave != user.clave){
                     return@post call.respond(HttpStatusCode.BadRequest, null)
                 }
                 call.respond(HttpStatusCode.OK, usuario)
             }
         }
-        route("/borrar") {
+        route("/borrarUsuario") {
             delete("{id?}") {
                 val id = call.parameters["id"] ?: return@delete call.respond(HttpStatusCode.BadRequest, false)
 
-                val usuario = usuarioDAO.obtener(id.toInt()) ?: return@delete call.respond(HttpStatusCode.NotFound, false)
+                val usuario = usuarioDAO.obtenerUsuarioPorId(id.toInt()) ?: return@delete call.respond(HttpStatusCode.NotFound, false)
 
                 if (!usuarioDAO.eliminar(id.toInt())){
                     return@delete call.respond(HttpStatusCode.Conflict, false)
@@ -53,6 +54,22 @@ fun Route.rutasUsuario() {
 
             }
         }
+        route("/insertarUsuario"){
+            post {
+                val user = call.receive<Usuario>()
+                val usuario = usuarioDAO.obtenerUsuarioPorNombre(user.nombre)
+                if(usuario != null){
+                    return@post call.respond(HttpStatusCode.Conflict, null)
+                }
+                if(!usuarioDAO.insertar(user)){
+                    return@post call.respond(HttpStatusCode.Conflict, null)
+                }
+                return@post call.respond(HttpStatusCode.Created, usuario)
+            }
+
+        }
+
+
     }
 }
 
