@@ -8,6 +8,7 @@ import retrofit2.Response
 import Modelo.Usuario
 import Modelo.UsuarioLogIn
 import Api.UsuarioNetwork
+import android.util.Log
 import androidx.lifecycle.ViewModel
 
 class UsuarioViewModel:ViewModel (){
@@ -46,7 +47,7 @@ class UsuarioViewModel:ViewModel (){
             _isLoading.value = true
 
             var response: Response<Usuario?> = UsuarioNetwork.retrofit.loginUsuario(user)
-
+            Log.e("Login", response.body().toString())
             if (response.isSuccessful) {
                 _myResponse.value = response.body()
                 _errorCode.value = response.code()
